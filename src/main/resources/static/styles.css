@@ -1,0 +1,9 @@
+.header {
+    background-color: white;
+}
+
+.nav-center a {
+    font-size: 20px;
+    color: black;
+    letter-spacing: 0.4em;
+}
