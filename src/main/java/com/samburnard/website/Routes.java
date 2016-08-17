@@ -1,15 +1,13 @@
 package com.samburnard.website;
 
-import freemarker.core.Environment;
 import freemarker.template.Configuration;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import spark.*;
+import spark.ModelAndView;
+import spark.Service;
+import spark.TemplateEngine;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +31,8 @@ class Routes {
         project();
         about();
         contact();
+        login();
+        admin();
     }
 
     private void index() {
@@ -67,6 +67,28 @@ class Routes {
         service.get("/contact", (request, response) -> {
             Map model = new HashMap<>();
             return new ModelAndView(model, "contact.ftl");
+        }, engine);
+    }
+
+    private void login() {
+        service.get("/login", (request, response) -> {
+            Map model = new HashMap<>();
+            return new ModelAndView(model, "login.ftl");
+        }, engine);
+    }
+
+    private void admin() {
+        service.get("/admin", (request, response) -> {
+            Map model = new HashMap<>();
+            return new ModelAndView(model, "admin/admin_index.ftl");
+        }, engine);
+        service.get("/admin/add", (request, response) -> {
+            Map model = new HashMap<>();
+            return new ModelAndView(model, "admin/admin_add.ftl");
+        }, engine);
+        service.get("/admin/manage", (request, response) -> {
+            Map model = new HashMap<>();
+            return new ModelAndView(model, "admin/admin_manage.ftl");
         }, engine);
     }
 

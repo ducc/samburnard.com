@@ -57,7 +57,7 @@ image="http://placehold.it/640x480"
 
 <#import "layout.ftl" as layout>
 <@layout.layout
-title="Home"
+title="Portfolio"
 >
 <#assign count=0>
 <#list items as obj>

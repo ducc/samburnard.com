@@ -13,7 +13,7 @@ title="default"
         <link rel="stylesheet" href="/styles.css" type="text/css">
     </head>
     <body>
-        <section class="header">
+        <section class="white">
             <div class="container">
                 <#include "navbar.ftl" />
             </div>

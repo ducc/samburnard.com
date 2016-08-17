@@ -2,9 +2,7 @@
 <@layout.layout
 title="Contact"
 >
-<div class="container">
-    <div class="box">
-        <p>Please contact me :)</p>
-    </div>
+<div class="box">
+    <p>Please contact me :)</p>
 </div>
 </@layout.layout>

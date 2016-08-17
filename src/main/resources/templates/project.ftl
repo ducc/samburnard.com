@@ -1,13 +1,12 @@
 <#macro item
 id="-1"
-name="Default name"
 thumbnail="Default thumbnail"
 image="Default image"
 >
 <div class="column is-one-third">
     <a class="modal-item" data-toggle="#${id}-modal">
         <figure class="image is-4by3">
-            <img src="${thumbnail}" alt="${name}">
+            <img src="${thumbnail}" alt="${project_title}">
         </figure>
     </a>
     <div class="modal" id="${id}-modal">
@@ -55,7 +54,7 @@ title=project_title
             <#if count=0>
                 <div class="columns">
             </#if>
-            <@item obj.id obj.name obj.thumbnail obj.image />
+            <@item obj.id obj.thumbnail obj.image />
             <#assign count=count+1 >
             <#if count=3>
             </div>

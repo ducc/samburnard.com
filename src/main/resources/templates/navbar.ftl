@@ -12,17 +12,20 @@
             SAM BURNARD
         </a>
     </div>
-    <span class="nav-toggle">
+    <span id="nav-toggle" class="nav-toggle">
         <span></span>
         <span></span>
         <span></span>
     </span>
-    <div class="nav-right nav-menu">
+    <div class="nav-right">
         <a class="nav-item" href="/about">
             About
         </a>
         <a class="nav-item" href="/contact">
             Contact
         </a>
+    </div>
+    <div class="nav-menu" id="nav-menu">
+
     </div>
 </nav>
