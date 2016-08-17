@@ -14,11 +14,13 @@ import java.util.Map;
 class Routes {
 
     private final Authentication authentication;
+    private final Projects projects;
     private final Service service;
     private final TemplateEngine engine;
 
     Routes() throws IOException {
         this.authentication = new Authentication(new File(Website.CREDENTIALS_FILE));
+        this.projects = new Projects(new File(Website.PROJECTS_DIRECTORY));
         this.service = Service.ignite();
         this.service.port(Website.PORT);
         this.service.exception(Exception.class, (e, request, response) -> e.printStackTrace());
