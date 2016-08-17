@@ -13,10 +13,12 @@ import java.util.Map;
 
 class Routes {
 
+    private final Authentication authentication;
     private final Service service;
     private final TemplateEngine engine;
 
     Routes() throws IOException {
+        this.authentication = new Authentication(new File(Website.CREDENTIALS_FILE));
         this.service = Service.ignite();
         this.service.port(Website.PORT);
         this.service.exception(Exception.class, (e, request, response) -> e.printStackTrace());
@@ -32,6 +34,7 @@ class Routes {
         about();
         contact();
         login();
+        logout();
         admin();
     }
 
@@ -72,23 +75,73 @@ class Routes {
 
     private void login() {
         service.get("/login", (request, response) -> {
-            Map model = new HashMap<>();
-            return new ModelAndView(model, "login.ftl");
+            Map<String, Object> model = new HashMap<>();
+            String page = "login.ftl";
+            if (authentication.isAuthenticated(request.session())) {
+                page = "error.ftl";
+                model.put("code", 403);
+                model.put("message", "You are already logged in!");
+            }
+            return new ModelAndView(model, page);
         }, engine);
+        service.post("/auth/login", (request, response) -> {
+            if (authentication.isAuthenticated(request.session())) {
+                return "You are already logged in!";
+            }
+            String username = request.queryParams("username");
+            String password = request.queryParams("password");
+            try {
+                authentication.login(request.session(), username, password);
+            } catch (Authentication.LoginException e) {
+                return "Could not login: " + e.getMessage();
+            }
+            response.redirect("/admin");
+            return "Logged in!";
+        });
+    }
+
+    private void logout() {
+        service.get("/logout", (request, response) -> {
+            try {
+                authentication.logout(request.session());
+            } catch (Authentication.NotLoggedInException e) {
+                return "Could not logout: " + e.getMessage();
+            }
+            response.redirect("/");
+            return "Logged out!";
+        });
     }
 
     private void admin() {
         service.get("/admin", (request, response) -> {
-            Map model = new HashMap<>();
-            return new ModelAndView(model, "admin/admin_index.ftl");
+            Map<String, Object> model = new HashMap<>();
+            String page = "admin/admin_index.ftl";
+            if (!authentication.isAuthenticated(request.session())) {
+                page = "error.ftl";
+                model.put("code", 401);
+                model.put("message", "You must be logged in!");
+            }
+            return new ModelAndView(model, page);
         }, engine);
         service.get("/admin/add", (request, response) -> {
-            Map model = new HashMap<>();
-            return new ModelAndView(model, "admin/admin_add.ftl");
+            Map<String, Object> model = new HashMap<>();
+            String page = "admin/admin_add.ftl";
+            if (!authentication.isAuthenticated(request.session())) {
+                page = "error.ftl";
+                model.put("code", 401);
+                model.put("message", "You must be logged in!");
+            }
+            return new ModelAndView(model, page);
         }, engine);
         service.get("/admin/manage", (request, response) -> {
-            Map model = new HashMap<>();
-            return new ModelAndView(model, "admin/admin_manage.ftl");
+            Map<String, Object> model = new HashMap<>();
+            String page = "admin/admin_manage.ftl";
+            if (!authentication.isAuthenticated(request.session())) {
+                page = "error.ftl";
+                model.put("code", 401);
+                model.put("message", "You must be logged in!");
+            }
+            return new ModelAndView(model, page);
         }, engine);
     }
 
