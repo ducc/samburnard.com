@@ -8,8 +8,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 class Routes {
 
@@ -135,6 +134,34 @@ class Routes {
             }
             return new ModelAndView(model, page);
         }, engine);
+        service.post("/admin/add", (request, response) -> {
+            if (!authentication.isAuthenticated(request.session())) {
+                return "no.";
+            }
+            Set<String> params = request.queryParams();
+            Projects.ProjectBuilder builder = projects.new ProjectBuilder();
+            List<String> strings = new ArrayList<>(params);
+            Collections.sort(strings);
+            for (String param : strings) {
+                String value = request.queryParams(param);
+                if (param.startsWith("image_image_")) {
+                    int length = param.length();
+                    int id = Integer.parseInt(String.valueOf(param.charAt(length - 1)));
+                    String thumbnailKey = "image_thumbnail_" + id;
+                    String thumbnailValue = request.queryParams(thumbnailKey);
+                    Projects.Image image = projects.new Image(String.valueOf(id), thumbnailValue, value);
+                    builder.with(image);
+                    continue;
+                } else if (param.startsWith("image_thumbnail_")) {
+                    continue;
+                }
+                builder.with(param, value);
+            }
+            Projects.Project project = builder.build();
+            projects.createProject(project);
+            response.redirect("/admin/manage");
+            return "OK! Redirecting...";
+        });
         service.get("/admin/manage", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
             String page = "admin/admin_manage.ftl";
@@ -143,6 +170,10 @@ class Routes {
                 model.put("code", 401);
                 model.put("message", "You must be logged in!");
             }
+            // ew wtf have i done :'(
+            List<Map<String, Object>> projects = new ArrayList<>();
+            this.projects.getProjects().forEach(project -> projects.add(project.toMap()));
+            model.put("projects", projects);
             return new ModelAndView(model, page);
         }, engine);
     }

@@ -13,7 +13,9 @@ class Projects {
 
     private final File directory;
 
-    Projects(File directory) throws IOException, NotDirectoryException {
+    private int numberOfProjects;
+
+    Projects(File directory) throws IOException {
         this.directory = directory;
         if (!directory.exists()) {
             throw new FileNotFoundException(directory.getName());
@@ -23,22 +25,11 @@ class Projects {
         }
         File[] files = directory.listFiles();
         if (files == null || files.length == 0) {
-            throw new EmptyDirectoryException(directory.getName());
+            this.numberOfProjects = 0;
+            return;
         }
+        this.numberOfProjects = files.length;
         loadProjects(projects, files);
-    }
-
-    class EmptyDirectoryException extends IOException {
-        private final String message;
-
-        EmptyDirectoryException(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String getMessage() {
-            return message;
-        }
     }
 
     private JSONObject readFile(File file) throws IOException {
@@ -60,6 +51,17 @@ class Projects {
         private final String summary;
         private final String description;
         private final String image;
+
+        Project(String id, String title, String summary, String description, String image, Collection<Image> images) {
+            this.id = id;
+            this.title = title;
+            this.summary = summary;
+            this.description = description;
+            this.image = image;
+            if (images != null && !images.isEmpty()) {
+                this.images.addAll(images);
+            }
+        }
 
         Project(File file) throws IOException {
             JSONObject json = readFile(file);
@@ -96,26 +98,7 @@ class Projects {
             }
         }
 
-        private class Image {
-            private final String id;
-            private final String thumbnail;
-            private final String image;
-
-            private Image(String id, String thumbnail, String image) {
-                this.id = id;
-                this.thumbnail = thumbnail;
-                this.image = image;
-            }
-
-            private JSONObject toJson() {
-                return new JSONObject()
-                        .put("id", id)
-                        .put("thumbnail", thumbnail)
-                        .put("image", image);
-            }
-        }
-
-        public JSONObject toJson() {
+        JSONObject toJson() {
             JSONObject json = new JSONObject()
                     .put("id", id)
                     .put("title", title)
@@ -128,6 +111,115 @@ class Projects {
                 json.put("images", array);
             }
             return json;
+        }
+
+        Map<String, Object> toMap() {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", id);
+            map.put("title", title);
+            map.put("summary", summary);
+            map.put("description", description);
+            map.put("image", image);
+            String[][] images = new String[this.images.size()][3];
+            for (int i = 0; i < this.images.size(); i++) {
+                images[i] = this.images.get(i).toArray();
+            }
+            map.put("images", images);
+            return map;
+        }
+
+        String getId() {
+            return id;
+        }
+
+        String getTitle() {
+            return title;
+        }
+
+        String getSummary() {
+            return summary;
+        }
+
+        String getDescription() {
+            return description;
+        }
+
+        String getImage() {
+            return image;
+        }
+
+        List<Image> getImages() {
+            return images;
+        }
+    }
+
+    class Image {
+        private final String id;
+        private final String thumbnail;
+        private final String image;
+
+        Image(String id, String thumbnail, String image) {
+            this.id = id;
+            this.thumbnail = thumbnail;
+            this.image = image;
+        }
+
+        private JSONObject toJson() {
+            return new JSONObject()
+                    .put("id", id)
+                    .put("thumbnail", thumbnail)
+                    .put("image", image);
+        }
+
+        String[] toArray() {
+            String[] array = new String[3];
+            array[0] = id;
+            array[1] = thumbnail;
+            array[2] = image;
+            return array;
+        }
+    }
+
+    class ProjectBuilder {
+
+        private String id = null;
+        private String title = null;
+        private String summary = null;
+        private String description = null;
+        private String image = null;
+        private Set<Image> images = new HashSet<>();
+
+        ProjectBuilder() {
+            this.id = String.valueOf(numberOfProjects + 1);
+        }
+
+        ProjectBuilder with(String key, String value) {
+            switch (key.toLowerCase()) {
+                case "title":
+                    this.title = value;
+                    break;
+                case "summary":
+                    this.summary = value;
+                    break;
+                case "description":
+                    this.description = value;
+                    break;
+                case "mainimage":
+                    this.image = value;
+                    break;
+                default:
+                    System.err.println("Invalid project attribute name \"" + key + "\"?");
+            }
+            return this;
+        }
+
+        ProjectBuilder with(Image image) {
+            images.add(image);
+            return this;
+        }
+
+        Project build() {
+            return new Project(id, title, summary, description, image, images);
         }
     }
 
@@ -156,6 +248,14 @@ class Projects {
         String content = project.toJson().toString(4);
         File file = new File(directory, project.id + ".json");
         writeFile(file, content);
+    }
+
+    Collection<Project> getProjects() {
+        return projects.values();
+    }
+
+    int countProjects() {
+        return projects.size();
     }
 
 }

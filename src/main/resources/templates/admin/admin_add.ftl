@@ -2,10 +2,10 @@
 <@layout.admin
 tab_name="Add a Project"
 >
-<form action="#" method="post">
+<form action="/admin/add" method="post">
     <label class="label">Project name</label>
     <p class="control">
-        <input class="input" type="text" placeholder="The project's name" name="name">
+        <input class="input" type="text" placeholder="The project's name" name="title">
     </p>
     <label class="label">Summary</label>
     <p class="control">
@@ -23,10 +23,10 @@ tab_name="Add a Project"
     <div id="thumbnail-inputs">
         <div id="item" class="box">
             <p class="control">
-                <input class="input" type="text" placeholder="Thumbnail link" name="image_thumbnail_1">
+                <input class="input add-image-input" type="text" placeholder="Thumbnail link" name="image_thumbnail_1">
             </p>
             <p class="control">
-                <input class="input" type="text" placeholder="Image link" name="image_image_1">
+                <input class="input add-image-input" type="text" placeholder="Image link" name="image_image_1">
             </p>
         </div>
     </div>

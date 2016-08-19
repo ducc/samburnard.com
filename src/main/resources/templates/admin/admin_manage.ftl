@@ -11,21 +11,29 @@ tab_name="Manage Projects"
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>1733</td>
-            <td>My Project</td>
-            <td>
-                <a class="button" href="/projects/1733">
-                    View
-                </a>
-                <a class="button is-warning" href="/admin/manage/1733">
-                    Edit
-                </a>
-                <a class="button is-danger" href="/admin/manage/1733/delete">
-                    Delete
-                </a>
-            </td>
-        </tr>
+        <#if projects?has_content>
+            <#list projects as project>
+                <tr>
+                    <td>${project["id"]}</td>
+                    <td>${project["title"]}</td>
+                    <td>
+                        <a class="button" href="/projects/${project["id"]}">
+                            View
+                        </a>
+                        <a class="button is-warning" href="/admin/manage/${project["id"]}">
+                            Edit
+                        </a>
+                        <a class="button is-danger" href="/admin/manage/${project["id"]}/delete">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            </#list>
+        <#else>
+            <tr>
+                <td>No projects found!</td>
+            </tr>
+        </#if>
     </tbody>
 </table>
 </@layout.admin>
