@@ -41,20 +41,20 @@ title=project_title
 <div class="columns">
     <div class="column is-one-quarter">
         <div class="box">
-            <h1 class="title">${project_title}</h1>
-            <h2 class="subtitle">${project_summary}</h2>
+            <h1 class="title">${project["title"]}</h1>
+            <h2 class="subtitle">${project["summary"]}</h2>
             <p>
-                ${project_description}
+                ${project["description"]}
             </p>
         </div>
     </div>
     <div class="column">
         <#assign count=0>
-        <#list items as obj>
+        <#list project["images"] as image>
             <#if count=0>
                 <div class="columns">
             </#if>
-            <@item obj.id obj.thumbnail obj.image />
+            <@item image[0] image[1] image[2] />
             <#assign count=count+1 >
             <#if count=3>
             </div>

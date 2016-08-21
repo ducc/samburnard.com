@@ -47,10 +47,13 @@ class Projects {
         private final List<Image> images = new ArrayList<>();
 
         private final String id;
-        private final String title;
-        private final String summary;
-        private final String description;
-        private final String image;
+        private String title;
+        private String summary;
+        private String description;
+        private String image;
+
+        private JSONObject json = null;
+        private Map<String, Object> map = null;
 
         Project(String id, String title, String summary, String description, String image, Collection<Image> images) {
             this.id = id;
@@ -99,33 +102,43 @@ class Projects {
         }
 
         JSONObject toJson() {
-            JSONObject json = new JSONObject()
-                    .put("id", id)
-                    .put("title", title)
-                    .put("summary", summary)
-                    .put("description", description)
-                    .put("image", image);
-            if (images.size() > 0) {
-                JSONArray array = new JSONArray();
-                images.forEach(image -> array.put(image.toJson()));
-                json.put("images", array);
+            if (json == null) {
+                json = new JSONObject()
+                        .put("id", id)
+                        .put("title", title)
+                        .put("summary", summary)
+                        .put("description", description)
+                        .put("image", image);
+                if (images.size() > 0) {
+                    JSONArray array = new JSONArray();
+                    images.forEach(image -> array.put(image.toJson()));
+                    json.put("images", array);
+                }
             }
             return json;
         }
 
         Map<String, Object> toMap() {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", id);
-            map.put("title", title);
-            map.put("summary", summary);
-            map.put("description", description);
-            map.put("image", image);
-            String[][] images = new String[this.images.size()][3];
-            for (int i = 0; i < this.images.size(); i++) {
-                images[i] = this.images.get(i).toArray();
+            if (map == null) {
+                map = new HashMap<>();
+                map.put("id", id);
+                map.put("title", title);
+                map.put("summary", summary);
+                map.put("description", description);
+                map.put("image", image);
+                String[][] images = new String[this.images.size()][3];
+                for (int i = 0; i < this.images.size(); i++) {
+                    images[i] = this.images.get(i).toArray();
+                }
+                map.put("images", images);
             }
-            map.put("images", images);
             return map;
+        }
+
+        void update() throws IOException {
+            saveProject(this);
+            json = null;
+            map = null;
         }
 
         String getId() {
@@ -136,16 +149,32 @@ class Projects {
             return title;
         }
 
+        void setTitle(String title) {
+            this.title = title;
+        }
+
         String getSummary() {
             return summary;
+        }
+
+        void setSummary(String summary) {
+            this.summary = summary;
         }
 
         String getDescription() {
             return description;
         }
 
+        void setDescription(String description) {
+            this.description = description;
+        }
+
         String getImage() {
             return image;
+        }
+
+        void setImage(String image) {
+            this.image = image;
         }
 
         List<Image> getImages() {
@@ -190,7 +219,10 @@ class Projects {
         private Set<Image> images = new HashSet<>();
 
         ProjectBuilder() {
-            this.id = String.valueOf(numberOfProjects + 1);
+            while (this.id == null || projects.containsKey(this.id)) {
+                numberOfProjects++;
+                this.id = String.valueOf(numberOfProjects);
+            }
         }
 
         ProjectBuilder with(String key, String value) {
@@ -243,11 +275,28 @@ class Projects {
         }
     }
 
-    void createProject(Project project) throws IOException {
-        this.projects.put(project.id, project);
+    private void saveProject(Project project) throws IOException {
         String content = project.toJson().toString(4);
         File file = new File(directory, project.id + ".json");
         writeFile(file, content);
+    }
+
+    void createProject(Project project) throws IOException {
+        this.projects.put(project.id, project);
+        saveProject(project);
+    }
+
+    void deleteProject(Project project) throws IOException {
+        projects.remove(project.id);
+        File file = new File(directory, project.id + ".json");
+        boolean deleted = file.delete();
+        if (!deleted) {
+            throw new IOException("Could not delete file");
+        }
+    }
+
+    Project getProject(String id) {
+        return projects.get(id);
     }
 
     Collection<Project> getProjects() {

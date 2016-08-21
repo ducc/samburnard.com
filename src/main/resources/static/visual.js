@@ -29,9 +29,9 @@ $(document).ready(function() {
         var item = $("#item").clone();
         var elements = $(".add-image-input").toArray();
         $(elements[0]).attr("name", "image_thumbnail_" + images);
-        $(elements[0]).val();
+        $(elements[0]).val("");
         $(elements[1]).attr("name", "image_image_" + images);
-        $(elements[1]).val();
+        $(elements[1]).val("");
         item.appendTo("#thumbnail-inputs");
     });
 });

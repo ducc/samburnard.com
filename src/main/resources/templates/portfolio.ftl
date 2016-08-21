@@ -60,11 +60,11 @@ image="http://placehold.it/640x480"
 title="Portfolio"
 >
 <#assign count=0>
-<#list items as obj>
+<#list projects as project>
     <#if count=0>
         <div class="columns">
     </#if>
-    <@item obj.id obj.name obj.image />
+    <@item project["id"] project["title"] project["image"] />
     <#assign count=count+1 >
     <#if count=3>
         </div>

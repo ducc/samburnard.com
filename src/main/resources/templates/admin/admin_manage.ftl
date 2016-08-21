@@ -20,10 +20,10 @@ tab_name="Manage Projects"
                         <a class="button" href="/projects/${project["id"]}">
                             View
                         </a>
-                        <a class="button is-warning" href="/admin/manage/${project["id"]}">
+                        <a class="button is-warning" href="/admin/edit/${project["id"]}">
                             Edit
                         </a>
-                        <a class="button is-danger" href="/admin/manage/${project["id"]}/delete">
+                        <a class="button is-danger" href="/admin/delete/${project["id"]}">
                             Delete
                         </a>
                     </td>

@@ -69,9 +69,8 @@ class Authentication {
     }
 
     boolean isAuthenticated(Session session) {
-        return true; // TODO DO NOT FORGET TO REMOVE THIS
-        //return authenticationToken != null && session.attribute(AUTHENTICATION_TOKEN_SESSION_KEY) != null
-        //        && session.attribute(AUTHENTICATION_TOKEN_SESSION_KEY).equals(authenticationToken);
+        return authenticationToken != null && session.attribute(AUTHENTICATION_TOKEN_SESSION_KEY) != null
+                && session.attribute(AUTHENTICATION_TOKEN_SESSION_KEY).equals(authenticationToken);
     }
 
     @SuppressWarnings("ConstantConditions")

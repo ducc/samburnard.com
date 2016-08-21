@@ -2,6 +2,7 @@ package com.samburnard.website;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
+import spark.Response;
 import spark.Service;
 import spark.TemplateEngine;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -39,6 +40,14 @@ class Routes {
         admin();
     }
 
+    private ModelAndView error(Response response, int code, String message) {
+        Map<String, Object> model = new HashMap<>();
+        response.status(code);
+        model.put("code", code);
+        model.put("message", message);
+        return new ModelAndView(model, "error.ftl");
+    }
+
     private void index() {
         service.get("/", (request, response) -> {
             Map model = new HashMap<>();
@@ -48,14 +57,23 @@ class Routes {
 
     private void portfolio() {
         service.get("/portfolio", (request, response) -> {
-            Map model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
+            List<Map<String, Object>> projects = new ArrayList<>();
+            this.projects.getProjects().forEach(project -> projects.add(project.toMap()));
+            model.put("projects", projects);
             return new ModelAndView(model, "portfolio.ftl");
         }, engine);
     }
 
     private void project() {
         service.get("/projects/:project", (request, response) -> {
-            Map model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
+            String id = request.params("project");
+            if (id == null) {
+                return error(response, 404, "Project not found");
+            }
+            Projects.Project project = projects.getProject(id);
+            model.put("project", project.toMap());
             return new ModelAndView(model, "project.ftl");
         }, engine);
     }
@@ -77,13 +95,10 @@ class Routes {
     private void login() {
         service.get("/login", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
-            String page = "login.ftl";
             if (authentication.isAuthenticated(request.session())) {
-                page = "error.ftl";
-                model.put("code", 403);
-                model.put("message", "You are already logged in!");
+                return error(response, 403, "You are already logged in!");
             }
-            return new ModelAndView(model, page);
+            return new ModelAndView(model, "login.ftl");
         }, engine);
         service.post("/auth/login", (request, response) -> {
             if (authentication.isAuthenticated(request.session())) {
@@ -116,23 +131,17 @@ class Routes {
     private void admin() {
         service.get("/admin", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
-            String page = "admin/admin_index.ftl";
             if (!authentication.isAuthenticated(request.session())) {
-                page = "error.ftl";
-                model.put("code", 401);
-                model.put("message", "You must be logged in!");
+                return error(response, 401, "You must be logged in!");
             }
-            return new ModelAndView(model, page);
+            return new ModelAndView(model, "admin/admin_index.ftl");
         }, engine);
         service.get("/admin/add", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
-            String page = "admin/admin_add.ftl";
             if (!authentication.isAuthenticated(request.session())) {
-                page = "error.ftl";
-                model.put("code", 401);
-                model.put("message", "You must be logged in!");
+                return error(response, 401, "You must be logged in!");
             }
-            return new ModelAndView(model, page);
+            return new ModelAndView(model, "admin/admin_add.ftl");
         }, engine);
         service.post("/admin/add", (request, response) -> {
             if (!authentication.isAuthenticated(request.session())) {
@@ -164,18 +173,90 @@ class Routes {
         });
         service.get("/admin/manage", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
-            String page = "admin/admin_manage.ftl";
             if (!authentication.isAuthenticated(request.session())) {
-                page = "error.ftl";
-                model.put("code", 401);
-                model.put("message", "You must be logged in!");
+                return error(response, 401, "You must be logged in!");
             }
             // ew wtf have i done :'(
             List<Map<String, Object>> projects = new ArrayList<>();
             this.projects.getProjects().forEach(project -> projects.add(project.toMap()));
             model.put("projects", projects);
-            return new ModelAndView(model, page);
+            return new ModelAndView(model, "admin/admin_manage.ftl");
         }, engine);
+        service.get("/admin/edit/:project", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            if (!authentication.isAuthenticated(request.session())) {
+                return error(response, 401, "You must be logged in!");
+            }
+            String id = request.params("project");
+            if (id == null) {
+                return error(response, 404, "Project not found!");
+            }
+            Projects.Project project = projects.getProject(id);
+            model.put("project", project.toMap());
+            return new ModelAndView(model, "admin/admin_edit.ftl");
+        }, engine);
+        service.post("/admin/edit", ((request, response) -> {
+            if (!authentication.isAuthenticated(request.session())) {
+                return "no.";
+            }
+            String id = request.queryParams("id");
+            if (id == null) {
+                return "invalid project id";
+            }
+            Projects.Project project = projects.getProject(id);
+            boolean updated = false;
+            String title = request.queryParams("name");
+            String summary = request.queryParams("summary");
+            String description = request.queryParams("description");
+            String image = request.queryParams("mainimage");
+            if (title != null) {
+                project.setTitle(title);
+                updated = true;
+            }
+            if (summary != null) {
+                project.setSummary(summary);
+                updated = true;
+            }
+            if (description != null) {
+                project.setDescription(description);
+                updated = true;
+            }
+            if (image != null) {
+                project.setImage(image);
+                updated = true;
+            }
+            if (updated) {
+                project.update();
+            }
+            response.redirect("/admin/manage");
+            return "ok";
+        }));
+        service.get("/admin/delete/:project", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            if (!authentication.isAuthenticated(request.session())) {
+                return error(response, 401, "You must be logged in!");
+            }
+            String id = request.params("project");
+            if (id == null) {
+                return error(response, 404, "Project not found!");
+            }
+            Projects.Project project = projects.getProject(id);
+            model.put("project", project.toMap());
+            return new ModelAndView(model, "admin/admin_delete.ftl");
+        }, engine);
+        service.get("/admin/delete/:project/confirm", (request, response) -> {
+            if (!authentication.isAuthenticated(request.session())) {
+                return "no.";
+            }
+            String id = request.params("project");
+            if (id == null) {
+                return "invalid project";
+            }
+            Projects.Project project = projects.getProject(id);
+            projects.deleteProject(project);
+            response.redirect("/admin/manage");
+            return "ok";
+        });
     }
 
 }
