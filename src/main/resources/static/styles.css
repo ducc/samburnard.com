@@ -7,3 +7,41 @@
     color: black;
     letter-spacing: 0.4em;
 }
+
+/* show image title on hover - credit: http://stackoverflow.com/questions/18322548/black-transparent-overlay-on-image-hover-with-only-css */
+
+.hover-img {
+    position:relative;
+}
+
+.hover-img img {
+    width:100%;
+    vertical-align:top;
+}
+
+.hover-img:after, .hover-img:before {
+    position:absolute;
+    opacity:0;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+.hover-img:after {
+    content:'\A';
+    width:100%; height:100%;
+    top:0; left:0;
+    background:rgba(0,0,0,0.6);
+}
+.hover-img:before {
+    content: attr(data-content);
+    width:100%;
+    color:#fff;
+    z-index:1;
+    bottom:40%;
+    padding:4px 10px;
+    text-align:center;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+}
+.hover-img:hover:after, .hover-img:hover:before {
+    opacity:1;
+}

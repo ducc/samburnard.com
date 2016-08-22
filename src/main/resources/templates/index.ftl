@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 <@layout.layout
-title="Home"
+title="Illustration and Design"
 >
 <br />
 <br />

@@ -5,55 +5,12 @@ image="http://placehold.it/640x480"
 >
 <div class="column is-one-third">
     <a href="/projects/${id}">
-        <figure class="image is-4by3">
+        <figure class="image is-4by3 hover-img" data-content="${name}">
             <img src="${image}" alt="${name}">
         </figure>
     </a>
 </div>
 </#macro>
-
-<#assign items=[
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-},
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-},
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-},
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-},
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-},
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-},
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-},
-{
-"id": "1371",
-"name": "The Project Name",
-"image": "http://placehold.it/640x480"
-}
-]>
 
 <#import "layout.ftl" as layout>
 <@layout.layout

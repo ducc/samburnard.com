@@ -20,6 +20,12 @@
         </span>
         Add a Project
     </a>
+    <a class="panel-block" href="/admin/about">
+        <span class="panel-icon">
+            <i class="fa fa-user"></i>
+        </span>
+        About Page
+    </a>
     <a class="panel-block" href="/logout">
         <span class="panel-icon">
             <i class="fa fa-sign-out"></i>

@@ -21,10 +21,17 @@ $(document).ready(function() {
         $(this).parent().removeClass('is-active');
     });
 
-    var images = 1;
+    var images = -1;
 
     // add another image button
     $("#add-image").click(function() {
+        if (images === -1) {
+            if ($("#thumbnail-count").length) {
+                images = $("#thumbnail-count").text();
+            } else {
+                images = 1;
+            }
+        }
         images++;
         var item = $("#item").clone();
         var elements = $(".add-image-input").toArray();
@@ -33,5 +40,11 @@ $(document).ready(function() {
         $(elements[1]).attr("name", "image_image_" + images);
         $(elements[1]).val("");
         item.appendTo("#thumbnail-inputs");
+    });
+
+    // about preview content
+    $("#about-preview").click(function() {
+        var text = $("#content").val();
+        $("#preview").html(text);
     });
 });

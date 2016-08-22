@@ -21,6 +21,7 @@ tab_name="Edit a Project"
         <input class="input" type="text" placeholder="A link to your main image" name="mainimage" value="${project["image"]}">
     </p>
     <label class="label">Project images</label>
+    <span id="thumbnail-count" style="display: none;">${project?size / 2}</span>
     <div id="thumbnail-inputs">
         <#list project["images"] as image>
             <div id="item" class="box">
