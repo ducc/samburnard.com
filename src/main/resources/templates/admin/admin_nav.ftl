@@ -38,6 +38,12 @@
         </span>
         Contact Page
     </a>
+    <a class="panel-block" href="/admin/social">
+        <span class="panel-icon">
+            <i class="fa fa-users"></i>
+        </span>
+        Social Media Profiles
+    </a>
     <a class="panel-block" href="/logout">
         <span class="panel-icon">
             <i class="fa fa-sign-out"></i>

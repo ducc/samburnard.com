@@ -20,6 +20,7 @@ class Routes {
     private final ContentPage about;
     private final ContentPage contact;
     private final ContentPage home;
+    private final ContentPage social;
     private final Service service;
     private final TemplateEngine engine;
 
@@ -29,6 +30,7 @@ class Routes {
         this.about = new ContentPage(new File(Website.ABOUT_FILE));
         this.contact = new ContentPage(new File(Website.CONTACT_FILE));
         this.home = new ContentPage(new File(Website.HOME_FILE));
+        this.social = new ContentPage(new File(Website.SOCIAL_FILE));
         this.service = Service.ignite();
         this.service.port(Website.PORT);
         this.service.exception(Exception.class, (e, request, response) -> e.printStackTrace());
@@ -49,16 +51,43 @@ class Routes {
     }
 
     private ModelAndView error(Response response, int code, String message) {
-        Map<String, Object> model = new HashMap<>();
+        Map<String, Object> model = getNewModel();
         response.status(code);
         model.put("code", code);
         model.put("message", message);
         return new ModelAndView(model, "error.ftl");
     }
 
+    private Map<String, Object> getNewModel() {
+        class ModelBuilder {
+            private final Map<String, Object> model = new HashMap<>();
+
+            private final JSONObject json;
+            private final String[] items;
+
+            ModelBuilder(JSONObject json, String... items) {
+                this.json = json;
+                this.items = items;
+            }
+
+            Map<String, Object> build() {
+                if (json != null) {
+                    for (String item : items) {
+                        if (!json.isNull(item)) {
+                            model.put(item, json.get(item));
+                        }
+                    }
+                }
+                return model;
+            }
+        }
+        JSONObject json = social.getContentAsJson();
+        return new ModelBuilder(json, "instagram", "twitter", "facebook", "youtube").build();
+    }
+
     private void index() {
         service.get("/", (request, response) -> {
-            Map<String, Object> model = new HashMap<>();
+            Map<String, Object> model = getNewModel();
             JSONObject json = home.getContentAsJson();
             if (json != null) {
                 model.put("json", json);
@@ -69,7 +98,7 @@ class Routes {
 
     private void portfolio() {
         service.get("/portfolio", (request, response) -> {
-            Map<String, Object> model = new HashMap<>();
+            Map<String, Object> model = getNewModel();
             List<Map<String, Object>> projects = new ArrayList<>();
             this.projects.getProjects().forEach(project -> projects.add(project.toMap()));
             model.put("projects", projects);
@@ -79,7 +108,7 @@ class Routes {
 
     private void project() {
         service.get("/projects/:project", (request, response) -> {
-            Map<String, Object> model = new HashMap<>();
+            Map<String, Object> model = getNewModel();
             String id = request.params("project");
             if (id == null) {
                 return error(response, 404, "Project not found");
@@ -95,7 +124,7 @@ class Routes {
 
     private void about() {
         service.get("/about", (request, response) -> {
-            Map<String, Object> model = new HashMap<>();
+            Map<String, Object> model = getNewModel();
             model.put("content", about.getContent());
             return new ModelAndView(model, "about.ftl");
         }, engine);
@@ -103,7 +132,7 @@ class Routes {
 
     private void contact() {
         service.get("/contact", (request, response) -> {
-            Map<String, Object> model = new HashMap<>();
+            Map<String, Object> model = getNewModel();
             model.put("content", contact.getContent());
             return new ModelAndView(model, "contact.ftl");
         }, engine);
@@ -111,7 +140,7 @@ class Routes {
 
     private void login() {
         service.get("/login", (request, response) -> {
-            Map<String, Object> model = new HashMap<>();
+            Map<String, Object> model = getNewModel();
             if (authentication.isAuthenticated(request.session())) {
                 return error(response, 403, "You are already logged in!");
             }
@@ -159,11 +188,12 @@ class Routes {
             about();
             contact();
             home();
+            social();
         }
 
         private void index() {
             service.get("/admin", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -173,7 +203,7 @@ class Routes {
 
         private void add() {
             service.get("/admin/add", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -211,7 +241,7 @@ class Routes {
 
         private void manage() {
             service.get("/admin/manage", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -225,7 +255,7 @@ class Routes {
 
         private void edit() {
             service.get("/admin/edit/:project", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -293,7 +323,7 @@ class Routes {
 
         private void delete() {
             service.get("/admin/delete/:project", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -322,7 +352,7 @@ class Routes {
 
         private void about() {
             service.get("/admin/about", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -345,7 +375,7 @@ class Routes {
 
         private void contact() {
             service.get("/admin/contact", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -369,7 +399,7 @@ class Routes {
         @SuppressWarnings("CodeBlock2Expr")
         private void home() {
             service.get("/admin/home", (request, response) -> {
-                Map<String, Object> model = new HashMap<>();
+                Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
@@ -400,6 +430,45 @@ class Routes {
                 return "ok";
             });
         }
+
+        private void social() {
+            service.get("/admin/social", (request, response) -> {
+                Map<String, Object> model = getNewModel();
+                if (!authentication.isAuthenticated(request.session())) {
+                    return error(response, 401, "You must be logged in!");
+                }
+                return new ModelAndView(model, "admin/admin_social.ftl");
+            }, engine);
+            service.post("/admin/social", (request, response) -> {
+                if (!authentication.isAuthenticated(request.session())) {
+                    return "no.";
+                }
+                JSONObject json = social.getContentAsJson();
+                if (json == null) {
+                    json = new JSONObject();
+                }
+                String instagram = request.queryParams("instagram");
+                if (instagram != null) {
+                    json.put("instagram", instagram);
+                }
+                String twitter = request.queryParams("twitter");
+                if (twitter != null) {
+                    json.put("twitter", twitter);
+                }
+                String facebook = request.queryParams("facebook");
+                if (facebook != null) {
+                    json.put("facebook", facebook);
+                }
+                String youtube = request.queryParams("youtube");
+                if (youtube != null) {
+                    json.put("youtube", youtube);
+                }
+                social.setContent(json.toString());
+                response.redirect("/admin/social");
+                return "ok";
+            });
+        }
+
     }
 
 }

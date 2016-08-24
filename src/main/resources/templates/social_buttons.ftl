@@ -1,5 +1,5 @@
 <#macro social icon="" link="">
-<div class="column is-one-third">
+<div class="column">
     <a href="${link}">
         <div class="box has-text-centered">
             <div class="content">

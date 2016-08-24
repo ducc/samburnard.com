@@ -17,9 +17,18 @@ title="About"
                     </div>
                 </div>
                 <div class="columns">
-                    <@buttons.social "fa-twitter" "#" />
-                    <@buttons.social "fa-instagram" "https://instagram.com/sam_burnard" />
-                    <@buttons.social "fa-facebook" "#" />
+                    <#if twitter?has_content>
+                        <@buttons.social "fa-twitter" "https://twitter.com/${twitter}" />
+                    </#if>
+                    <#if instagram?has_content>
+                        <@buttons.social "fa-instagram" "https://instagram.com/${instagram}" />
+                    </#if>
+                    <#if facebook?has_content>
+                        <@buttons.social "fa-facebook" "${facebook}" />
+                    </#if>
+                    <#if youtube?has_content>
+                        <@buttons.social "fa-youtube" "${youtube}" />
+                    </#if>
                 </div>
             </div>
             <div class="column is-6">
