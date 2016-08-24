@@ -21,3 +21,4 @@ http://samburnard.com
 
 ## License
 This code is licensed under the MIT license. Full text can be found in the `LICENSE` file which is inside of the project root.
+![TLDRLegal MIT summary](http://i.imgur.com/sj8wF1K.png)
