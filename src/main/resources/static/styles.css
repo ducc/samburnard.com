@@ -25,12 +25,14 @@
     transition: all 0.5s;
     -webkit-transition: all 0.5s;
 }
+
 .hover-img:after {
     content:'\A';
     width:100%; height:100%;
     top:0; left:0;
     background:rgba(0,0,0,0.6);
 }
+
 .hover-img:before {
     content: attr(data-content);
     width:100%;
@@ -42,6 +44,7 @@
     box-sizing:border-box;
     -moz-box-sizing:border-box;
 }
+
 .hover-img:hover:after, .hover-img:hover:before {
     opacity:1;
 }

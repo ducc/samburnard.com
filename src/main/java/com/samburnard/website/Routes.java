@@ -1,6 +1,8 @@
 package com.samburnard.website;
 
 import freemarker.template.Configuration;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import spark.ModelAndView;
 import spark.Response;
 import spark.Service;
@@ -15,14 +17,18 @@ class Routes {
 
     private final Authentication authentication;
     private final Projects projects;
-    private final About about;
+    private final ContentPage about;
+    private final ContentPage contact;
+    private final ContentPage home;
     private final Service service;
     private final TemplateEngine engine;
 
     Routes() throws IOException {
         this.authentication = new Authentication(new File(Website.CREDENTIALS_FILE));
         this.projects = new Projects(new File(Website.PROJECTS_DIRECTORY));
-        this.about = new About(new File(Website.ABOUT_FILE));
+        this.about = new ContentPage(new File(Website.ABOUT_FILE));
+        this.contact = new ContentPage(new File(Website.CONTACT_FILE));
+        this.home = new ContentPage(new File(Website.HOME_FILE));
         this.service = Service.ignite();
         this.service.port(Website.PORT);
         this.service.exception(Exception.class, (e, request, response) -> e.printStackTrace());
@@ -52,7 +58,11 @@ class Routes {
 
     private void index() {
         service.get("/", (request, response) -> {
-            Map model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
+            JSONObject json = home.getContentAsJson();
+            if (json != null) {
+                model.put("json", json);
+            }
             return new ModelAndView(model, "index.ftl");
         }, engine);
     }
@@ -85,7 +95,7 @@ class Routes {
 
     private void about() {
         service.get("/about", (request, response) -> {
-            Map model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
             model.put("content", about.getContent());
             return new ModelAndView(model, "about.ftl");
         }, engine);
@@ -93,7 +103,8 @@ class Routes {
 
     private void contact() {
         service.get("/contact", (request, response) -> {
-            Map model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
+            model.put("content", contact.getContent());
             return new ModelAndView(model, "contact.ftl");
         }, engine);
     }
@@ -146,6 +157,8 @@ class Routes {
             edit();
             delete();
             about();
+            contact();
+            home();
         }
 
         private void index() {
@@ -326,6 +339,64 @@ class Routes {
                 }
                 about.setContent(content);
                 response.redirect("/admin/about");
+                return "ok";
+            });
+        }
+
+        private void contact() {
+            service.get("/admin/contact", (request, response) -> {
+                Map<String, Object> model = new HashMap<>();
+                if (!authentication.isAuthenticated(request.session())) {
+                    return error(response, 401, "You must be logged in!");
+                }
+                model.put("content", contact.getContent());
+                return new ModelAndView(model, "admin/admin_contact.ftl");
+            }, engine);
+            service.post("/admin/contact", (request, response) -> {
+                if (!authentication.isAuthenticated(request.session())) {
+                    return "no.";
+                }
+                String content = request.queryParams("content");
+                if (content == null) {
+                    return "content is null";
+                }
+                contact.setContent(content);
+                response.redirect("/admin/contact");
+                return "ok";
+            });
+        }
+
+        @SuppressWarnings("CodeBlock2Expr")
+        private void home() {
+            service.get("/admin/home", (request, response) -> {
+                Map<String, Object> model = new HashMap<>();
+                if (!authentication.isAuthenticated(request.session())) {
+                    return error(response, 401, "You must be logged in!");
+                }
+                JSONObject json = home.getContentAsJson();
+                if (json != null && !json.isNull("images")) {
+                    model.put("images", json.getJSONArray("images").toString().substring(1).replace("]", "").replace("\"", ""));
+                }
+                return new ModelAndView(model, "admin/admin_home.ftl");
+            }, engine);
+            service.post("/admin/home/carousel", (request, response) -> {
+                if (!authentication.isAuthenticated(request.session())) {
+                    return "no.";
+                }
+                String rawImages = request.queryParams("images");
+                if (rawImages == null) {
+                    return "images is null";
+                }
+                if (rawImages.length() == 0 || !rawImages.contains("c")) {
+                    return "invalid images input";
+                }
+                String[] split = rawImages.split(",");
+                JSONArray array = new JSONArray();
+                for (String s : split) {
+                    array.put(s);
+                }
+                home.setContent(new JSONObject().put("images", array).toString());
+                response.redirect("/admin/home");
                 return "ok";
             });
         }

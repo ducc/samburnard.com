@@ -1,4 +1,4 @@
-<nav class="nav">
+<nav class="nav" style="background: transparent;">
     <div class="nav-left">
         <a class="nav-item" href="/">
             Home

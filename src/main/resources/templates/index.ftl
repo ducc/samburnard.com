@@ -1,15 +1,33 @@
 <#import "layout.ftl" as layout>
-<@layout.layout
+<@layout.basic
 title="Illustration and Design"
+index_script=true
 >
-<br />
-<br />
-<center>
-    <h1 class="title">Welcome!</h1>
-    <h2 class="subtitle">This is a temporary homepage.</h2>
-    <br />
-    <a class="button is-primary is-large">
-        CLICK ME!
-    </a>
-</center>
-</@layout.layout>
+<span style="display: none;" id="carousel-data">${json}</span>
+<style>
+    html,
+    body {
+    height: 100%;
+    }
+
+    body {
+        background-image: url("${json?eval.images[0]}");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+    }
+
+    .index-hero {
+        margin-top: 300px;
+        font-size: 50px;
+        color: white;
+        font-weight: 30px;
+        letter-spacing: 5px;
+    }
+</style>
+<section>
+    <div class="container">
+        <#include "navbar.ftl" />
+    </div>
+</section>
+</@layout.basic>

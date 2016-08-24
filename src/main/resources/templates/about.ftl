@@ -1,18 +1,5 @@
-<#macro social icon="" link="">
-<div class="column is-one-third">
-    <a href="${link}">
-        <div class="box has-text-centered">
-            <div class="content">
-                <p>
-                    <i class="fa ${icon}"></i>
-                </p>
-            </div>
-        </div>
-    </a>
-</div>
-</#macro>
-
 <#import "layout.ftl" as layout>
+<#import "social_buttons.ftl" as buttons>
 <@layout.layout
 title="About"
 >
@@ -25,12 +12,14 @@ title="About"
             <div class="column is-6">
                 <div class="box">
                     <center style="margin-bottom: 10px;"><h1 class="title">About Me</h1></center>
-                    <p>${content}</p>
+                    <div class="content">
+                        <p>${content}</p>
+                    </div>
                 </div>
                 <div class="columns">
-                    <@social "fa-twitter" "#" />
-                    <@social "fa-instagram" "https://instagram.com/sam_burnard" />
-                    <@social "fa-facebook" "#" />
+                    <@buttons.social "fa-twitter" "#" />
+                    <@buttons.social "fa-instagram" "https://instagram.com/sam_burnard" />
+                    <@buttons.social "fa-facebook" "#" />
                 </div>
             </div>
             <div class="column is-6">

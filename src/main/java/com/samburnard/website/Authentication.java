@@ -9,7 +9,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -54,9 +53,25 @@ class Authentication {
         return new BigInteger(130, RANDOM).toString(32);
     }
 
+    private byte[] hash(MessageDigest digest, byte[] bytes) {
+        return digest.digest(bytes);
+    }
+
+    private String toHexString(byte[] bytes) {
+        final StringBuilder builder = new StringBuilder();
+        for(byte b : bytes) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
+
     private String hash(String input) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        return Arrays.toString(digest.digest(input.getBytes(StandardCharsets.UTF_8)));
+        byte[] hash = input.getBytes(StandardCharsets.UTF_8);
+        for (int i = 0; i < Website.HASHING_ROUNDS; i++) {
+            hash = hash(digest, hash);
+        }
+        return toHexString(hash);
     }
 
     private String hashCredentials(String username, String password, String salt) {
@@ -73,9 +88,10 @@ class Authentication {
                 && session.attribute(AUTHENTICATION_TOKEN_SESSION_KEY).equals(authenticationToken);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private boolean validateCredentials(String username, String password) {
-        return credentialsHash != null && hashCredentials(username, password, salt).equals(credentialsHash);
+        if (credentialsHash == null) return false;
+        String hash = hashCredentials(username, password, salt);
+        return hash != null && hash.equals(credentialsHash);
     }
 
     abstract class LoginException extends Exception {
