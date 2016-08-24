@@ -10,7 +10,7 @@ final class Website {
     static final String CONTACT_FILE = "contact.txt";
     static final String HOME_FILE = "home.json";
     static final String SOCIAL_FILE = "social.json";
-    static final int PORT = 8123;
+    static final int PORT = 80;
     static final String TEMPLATE_DIRECTORY = "src/main/resources/templates";
     static final String STATIC_DIRECTORY = "static";
     static final long STATIC_EXPIRE_DURATION = 1;
