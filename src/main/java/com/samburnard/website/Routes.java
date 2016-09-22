@@ -219,6 +219,7 @@ class Routes {
                 Collections.sort(strings);
                 for (String param : strings) {
                     String value = request.queryParams(param);
+                    if (value == null || value.length() == 0) continue;
                     if (param.startsWith("image_image_")) {
                         int length = param.length();
                         int id = Integer.parseInt(String.valueOf(param.charAt(length - 1)));
@@ -303,6 +304,7 @@ class Routes {
                 project.getImages().clear();
                 for (String param : strings) {
                     String value = request.queryParams(param);
+                    if (value == null || value.length() == 0) continue;
                     if (param.startsWith("image_image_")) {
                         int length = param.length();
                         int imageId = Integer.parseInt(String.valueOf(param.charAt(length - 1)));

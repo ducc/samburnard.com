@@ -25,7 +25,4 @@
             Contact
         </a>
     </div>
-    <div class="nav-menu" id="nav-menu">
-
-    </div>
 </nav>
