@@ -33,6 +33,14 @@ tab_name="Edit a Project"
                 </p>
             </div>
         </#list>
+        <div id="item" class="box">
+            <p class="control">
+                <input class="input add-image-input" type="text" placeholder="Thumbnail link" name="image_thumbnail_1">
+            </p>
+            <p class="control">
+                <input class="input add-image-input" type="text" placeholder="Image link" name="image_image_1">
+            </p>
+        </div>
     </div>
     <br />
     <a class="button is-success is-fullwidth" id="add-image">

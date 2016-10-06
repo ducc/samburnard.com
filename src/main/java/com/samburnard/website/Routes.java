@@ -3,10 +3,7 @@ package com.samburnard.website;
 import freemarker.template.Configuration;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import spark.ModelAndView;
-import spark.Response;
-import spark.Service;
-import spark.TemplateEngine;
+import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import java.io.File;

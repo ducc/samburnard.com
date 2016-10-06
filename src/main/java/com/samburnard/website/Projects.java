@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.NotDirectoryException;
 import java.util.*;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 class Projects {
 
     private final Map<String, Project> projects = new HashMap<>();
@@ -18,7 +19,7 @@ class Projects {
     Projects(File directory) throws IOException {
         this.directory = directory;
         if (!directory.exists()) {
-            throw new FileNotFoundException(directory.getName());
+            directory.mkdir();
         }
         if (!directory.isDirectory()) {
             throw new NotDirectoryException(directory.getName());
