@@ -1,10 +1,11 @@
 package com.samburnard.website;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 final class Website {
 
-    static final int PORT = 4567;
+    static final int PORT = 80;
     static final String CREDENTIALS_FILE = "credentials.txt";
     static final String PROJECTS_DIRECTORY = "projects";
     static final String ABOUT_FILE = "about.txt";
@@ -19,7 +20,7 @@ final class Website {
     public static void main(String[] args) throws IOException {
         try {
             new Routes();
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
