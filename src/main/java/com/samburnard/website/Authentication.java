@@ -119,7 +119,7 @@ class Authentication {
         }
     }
 
-    class InvalidCredentialsException extends LoginException {
+    private class InvalidCredentialsException extends LoginException {
         private InvalidCredentialsException() {
             super("Invalid username or password!");
         }

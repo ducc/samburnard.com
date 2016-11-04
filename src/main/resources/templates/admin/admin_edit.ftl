@@ -1,4 +1,5 @@
 <#import "admin.ftl" as layout>
+<#import "admin_add.ftl" as add>
 <@layout.admin
 tab_name="Edit a Project"
 >
@@ -21,32 +22,43 @@ tab_name="Edit a Project"
         <input class="input" type="text" placeholder="A link to your main image" name="mainimage" value="${project["image"]}">
     </p>
     <label class="label">Project images</label>
-    <span id="thumbnail-count" style="display: none;">${project?size / 2}</span>
-    <div id="thumbnail-inputs">
-        <#list project["images"] as image>
-            <div id="item" class="box">
-                <p class="control">
-                    <input class="input add-image-input" type="text" placeholder="Thumbnail link" name="image_thumbnail_${image[0]}" value="${image[1]}">
-                </p>
-                <p class="control">
-                    <input class="input add-image-input" type="text" placeholder="Image link" name="image_image_${image[0]}" value="${image[2]}">
-                </p>
+    <span id="thumbnail-count" style="display: none;">${(project?size / 2) + 1}</span>
+    <div class="control">
+        <#if project?has_content>
+            <#assign num = 0>
+	        <#assign highest = project["images"]?size>
+            <div class="columns">
+			    <#list project["images"] as image>
+			        <#assign num = num + 1>
+			        <@add.item image[0] image[1] />
+			        <#if num == 3>
+			            </div>
+	                    <div class="columns">
+			            <#assign num = 0>
+			        </#if>
+		        </#list>
+		        <#list 1..100 as while>
+			        <#if highest % 3 == 0>
+				        <#break />
+			        </#if>
+			        <#assign highest = highest + 1>
+			        <@add.item highest "" />
+		        </#list>
             </div>
-        </#list>
-        <div id="item" class="box">
-            <p class="control">
-                <input class="input add-image-input" type="text" placeholder="Thumbnail link" name="image_thumbnail_1">
-            </p>
-            <p class="control">
-                <input class="input add-image-input" type="text" placeholder="Image link" name="image_image_1">
-            </p>
-        </div>
+            <div class="columns">
+		        <#list 1..3 as x>
+		            <#assign highest = highest + 1>
+			        <@add.item highest "" />
+		        </#list>
+            </div>
+            <div class="columns">
+		        <#list 1..3 as x>
+		            <#assign highest = highest + 1>
+			        <@add.item highest "" />
+		        </#list>
+            </div>
+        </#if>
     </div>
-    <br />
-    <a class="button is-success is-fullwidth" id="add-image">
-        Add another image
-    </a>
-    <br />
     <p class="control">
         <button class="button is-primary" type="submit">Update</button>
     </p>

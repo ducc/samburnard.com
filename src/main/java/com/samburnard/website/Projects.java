@@ -94,9 +94,8 @@ class Projects {
                 };
                 iterable.forEach(object -> {
                     String id = object.getString("id");
-                    String thumbnail = object.getString("thumbnail");
                     String image = object.getString("image");
-                    Image img = new Image(id, thumbnail, image);
+                    Image img = new Image(id, image);
                     this.images.add(img);
                 });
             }
@@ -127,7 +126,7 @@ class Projects {
                 map.put("summary", summary);
                 map.put("description", description);
                 map.put("image", image);
-                String[][] images = new String[this.images.size()][3];
+                String[][] images = new String[this.images.size()][2];
                 for (int i = 0; i < this.images.size(); i++) {
                     images[i] = this.images.get(i).toArray();
                 }
@@ -185,28 +184,23 @@ class Projects {
 
     class Image {
         private final String id;
-        private final String thumbnail;
         private final String image;
 
-        Image(String id, String thumbnail, String image) {
+        Image(String id, String image) {
             this.id = id;
-            this.thumbnail = thumbnail;
             this.image = image;
         }
 
         private JSONObject toJson() {
             return new JSONObject()
                     .put("id", id)
-                    .put("thumbnail", thumbnail)
                     .put("image", image);
         }
 
         String[] toArray() {
-            String[] array = new String[3];
-            array[0] = id;
-            array[1] = thumbnail;
-            array[2] = image;
-            return array;
+            return new String[] {
+                    id, image
+            };
         }
     }
 

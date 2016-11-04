@@ -3,7 +3,10 @@ package com.samburnard.website;
 import freemarker.template.Configuration;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import spark.*;
+import spark.ModelAndView;
+import spark.Response;
+import spark.Service;
+import spark.TemplateEngine;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import java.io.File;
@@ -34,7 +37,9 @@ class Routes {
         this.service.staticFileLocation(Website.STATIC_DIRECTORY);
         this.service.staticFiles.expireTime(Website.STATIC_EXPIRE_DURATION);
         Configuration configuration = new Configuration();
-        configuration.setDirectoryForTemplateLoading(new File(Website.TEMPLATE_DIRECTORY));
+        ClassLoader classLoader = getClass().getClassLoader();
+        @SuppressWarnings("ConstantConditions") String file = classLoader.getResource(Website.TEMPLATE_DIRECTORY).getFile();
+        configuration.setDirectoryForTemplateLoading(new File(new File(file).getPath()));
         configuration.setTemplateExceptionHandler((e, environment, writer) -> e.printStackTrace());
         this.engine = new FreeMarkerEngine(configuration);
         index();
@@ -45,6 +50,7 @@ class Routes {
         login();
         logout();
         new Admin();
+        service.get("*", (request, response) -> error(response, 404, "Page not found"), engine);
     }
 
     private ModelAndView error(Response response, int code, String message) {
@@ -62,12 +68,12 @@ class Routes {
             private final JSONObject json;
             private final String[] items;
 
-            ModelBuilder(JSONObject json, String... items) {
+            private ModelBuilder(JSONObject json, String... items) {
                 this.json = json;
                 this.items = items;
             }
 
-            Map<String, Object> build() {
+            private Map<String, Object> build() {
                 if (json != null) {
                     for (String item : items) {
                         if (!json.isNull(item)) {
@@ -79,7 +85,7 @@ class Routes {
             }
         }
         JSONObject json = social.getContentAsJson();
-        return new ModelBuilder(json, "instagram", "twitter", "facebook", "youtube").build();
+        return new ModelBuilder(json, "instagram", "twitter", "facebook", "youtube", "behance", "imgur").build();
     }
 
     private void index() {
@@ -145,6 +151,7 @@ class Routes {
         }, engine);
         service.post("/auth/login", (request, response) -> {
             if (authentication.isAuthenticated(request.session())) {
+                response.redirect("/admin");
                 return "You are already logged in!";
             }
             String username = request.queryParams("username");
@@ -217,15 +224,11 @@ class Routes {
                 for (String param : strings) {
                     String value = request.queryParams(param);
                     if (value == null || value.length() == 0) continue;
-                    if (param.startsWith("image_image_")) {
+                    if (param.startsWith("image_")) {
                         int length = param.length();
                         int id = Integer.parseInt(String.valueOf(param.charAt(length - 1)));
-                        String thumbnailKey = "image_thumbnail_" + id;
-                        String thumbnailValue = request.queryParams(thumbnailKey);
-                        Projects.Image image = projects.new Image(String.valueOf(id), thumbnailValue, value);
+                        Projects.Image image = projects.new Image(String.valueOf(id), value);
                         builder.with(image);
-                        continue;
-                    } else if (param.startsWith("image_thumbnail_")) {
                         continue;
                     }
                     builder.with(param, value);
@@ -302,12 +305,10 @@ class Routes {
                 for (String param : strings) {
                     String value = request.queryParams(param);
                     if (value == null || value.length() == 0) continue;
-                    if (param.startsWith("image_image_")) {
+                    if (param.startsWith("image_")) {
                         int length = param.length();
                         int imageId = Integer.parseInt(String.valueOf(param.charAt(length - 1)));
-                        String thumbnailKey = "image_thumbnail_" + imageId;
-                        String thumbnailValue = request.queryParams(thumbnailKey);
-                        Projects.Image i = projects.new Image(String.valueOf(imageId), thumbnailValue, value);
+                        Projects.Image i = projects.new Image(String.valueOf(imageId), value);
                         project.getImages().add(i);
                         updated = true;
                     }
@@ -461,6 +462,14 @@ class Routes {
                 String youtube = request.queryParams("youtube");
                 if (youtube != null) {
                     json.put("youtube", youtube);
+                }
+                String behance = request.queryParams("behance");
+                if (behance != null) {
+                    json.put("behance", behance);
+                }
+                String imgur = request.queryParams("imgur");
+                if (imgur != null) {
+                    json.put("imgur", imgur);
                 }
                 social.setContent(json.toString());
                 response.redirect("/admin/social");

@@ -13,11 +13,19 @@ tab_name="Social Media Profiles"
     </p>
     <label class="label">Facebook page (link)</label>
     <p class="control">
-        <input class="input" type="text" placeholder="https://www.facebook.com/EpicMemes10/" name="facebook" <#if facebook?has_content>value="${facebook}"</#if>>
+        <input class="input" type="text" placeholder="https://www.facebook.com/PageName/" name="facebook" <#if facebook?has_content>value="${facebook}"</#if>>
     </p>
     <label class="label">Youtube channel (link)</label>
     <p class="control">
-        <input class="input" type="text" placeholder="https://www.youtube.com/spongybacon" name="youtube" <#if youtube?has_content>value="${youtube}"</#if>>
+        <input class="input" type="text" placeholder="https://www.youtube.com/username" name="youtube" <#if youtube?has_content>value="${youtube}"</#if>>
+    </p>
+    <label class="label">Behance profile (link)</label>
+    <p class="control">
+        <input class="input" type="text" placeholder="https://www.behance.net/myusername" name="behance" <#if behance?has_content>value="${behance}"</#if>>
+    </p>
+    <label class="label">Imgur profile (link)</label>
+    <p class="control">
+        <input class="input" type="text" placeholder="https://www.imgur.com/" name="imgur" <#if imgur?has_content>value="${imgur}"</#if>>
     </p>
     <p class="control">
         <button class="button is-primary" type="submit">Submit</button>

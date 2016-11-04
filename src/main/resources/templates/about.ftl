@@ -17,18 +17,7 @@ title="About"
                     </div>
                 </div>
                 <div class="columns">
-                    <#if twitter?has_content>
-                        <@buttons.social "fa-twitter" "https://twitter.com/${twitter}" />
-                    </#if>
-                    <#if instagram?has_content>
-                        <@buttons.social "fa-instagram" "https://instagram.com/${instagram}" />
-                    </#if>
-                    <#if facebook?has_content>
-                        <@buttons.social "fa-facebook" "${facebook}" />
-                    </#if>
-                    <#if youtube?has_content>
-                        <@buttons.social "fa-youtube" "${youtube}" />
-                    </#if>
+                    <@buttons.social_column />
                 </div>
             </div>
             <div class="column is-6">

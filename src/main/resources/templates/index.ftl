@@ -15,6 +15,8 @@ index_script=true
         background-repeat: no-repeat;
         background-attachment: fixed;
         background-position: center;
+        -webkit-background-size:;
+        background-size: contain;
     }
 
     .index-hero {
@@ -25,7 +27,7 @@ index_script=true
         letter-spacing: 5px;
     }
 </style>
-<section>
+<section class="white">
     <div class="container">
         <#include "navbar.ftl" />
     </div>

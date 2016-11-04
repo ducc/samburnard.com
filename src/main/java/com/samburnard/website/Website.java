@@ -16,7 +16,7 @@ final class Website {
     static final long STATIC_EXPIRE_DURATION = 1;
     static final int HASHING_ROUNDS = 50;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         try {
             new Routes();
         } catch (IOException e) {

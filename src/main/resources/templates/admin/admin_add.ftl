@@ -1,3 +1,19 @@
+<#macro item id value>
+	<div class="column is-4">
+	    <p class="control">
+	        <input class="input add-image-input" type="text" placeholder="Image link" name="image_${id}" <#if value?has_content>value="${value}"</#if>>
+	    </p>
+	</div>
+</#macro>
+
+<#macro items ids>
+	<div class="columns">
+		<#list ids as id>
+			<@item id "" />
+		</#list>
+    </div>
+</#macro>
+
 <#import "admin.ftl" as layout>
 <@layout.admin
 tab_name="Add a Project"
@@ -20,21 +36,13 @@ tab_name="Add a Project"
         <input class="input" type="text" placeholder="A link to your main image" name="mainimage">
     </p>
     <label class="label">Project images</label>
-    <div id="thumbnail-inputs">
-        <div id="item" class="box">
-            <p class="control">
-                <input class="input add-image-input" type="text" placeholder="Thumbnail link" name="image_thumbnail_1">
-            </p>
-            <p class="control">
-                <input class="input add-image-input" type="text" placeholder="Image link" name="image_image_1">
-            </p>
-        </div>
+	<div class="control">
+		<@items [1,  2,  3] />
+        <@items [4,  5,  6] />
+        <@items [7,  8,  9] />
+        <@items [10, 11, 12] />
+        <@items [13, 14, 15] />
     </div>
-    <br />
-    <a class="button is-success is-fullwidth" id="add-image">
-        Add another image
-    </a>
-    <br />
     <p class="control">
         <button class="button is-primary" type="submit">Create project</button>
     </p>
