@@ -107,7 +107,7 @@ class Authentication {
         }
     }
 
-    class AlreadyLoggedInException extends LoginException {
+    private class AlreadyLoggedInException extends LoginException {
         private AlreadyLoggedInException() {
             super("You are already logged in!");
         }

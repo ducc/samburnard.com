@@ -8,15 +8,11 @@ import spark.Response;
 import spark.Service;
 import spark.TemplateEngine;
 import spark.template.freemarker.FreeMarkerEngine;
-import sun.misc.Launcher;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 class Routes {
 
@@ -42,22 +38,7 @@ class Routes {
         this.service.staticFileLocation(Website.STATIC_DIRECTORY);
         this.service.staticFiles.expireTime(Website.STATIC_EXPIRE_DURATION);
         Configuration configuration = new Configuration();
-        ClassLoader classLoader = getClass().getClassLoader();
-
-        /*@SuppressWarnings("ConstantConditions") URL url = classLoader.getResource(Website.TEMPLATE_DIRECTORY);
-        System.out.println(url);
-        File file = new File(url.getFile());*/
-        //File file = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-        //System.out.println(file);
-        //System.out.println(Arrays.toString(file.list()));
-        //configuration.setDirectoryForTemplateLoading(file);
-        //URL url = classLoader.getResource(Website.TEMPLATE_DIRECTORY);
-        //JarURLConnection connection = (JarURLConnection) url.openConnection();
-        //URL u = connection.getJarFileURL();
-        //System.out.println(u.getFile());
-
         configuration.setDirectoryForTemplateLoading(new File(Website.TEMPLATE_DIRECTORY));
-
         configuration.setTemplateExceptionHandler((e, environment, writer) -> e.printStackTrace());
         this.engine = new FreeMarkerEngine(configuration);
         index();
@@ -69,49 +50,6 @@ class Routes {
         logout();
         new Admin();
         service.get("*", (request, response) -> error(response, 404, "Page not found"), engine);
-    }
-
-    private File getFileFromJar(String path) {
-        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-
-        if(jarFile.isFile()) {  // Run with JAR file
-            final JarFile jar;
-            try {
-                jar = new JarFile(jarFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-            final Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
-            while(entries.hasMoreElements()) {
-                final String name = entries.nextElement().getName();
-                if (name.startsWith(path + "/")) { //filter according to the path
-                    File file = new File(name);
-                    //System.out.println(name);
-                    return file;
-                }
-            }
-            try {
-                jar.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else { // Run with IDE
-            final URL url = Launcher.class.getResource("/" + path);
-            if (url != null) {
-                try {
-                    final File apps = new File(url.toURI());
-                    //noinspection ConstantConditions
-                    for (File app : apps.listFiles()) {
-                        System.out.println(app);
-                        return app;
-                    }
-                } catch (URISyntaxException ex) {
-                    // never happens
-                }
-            }
-        }
-        return null;
     }
 
     private ModelAndView error(Response response, int code, String message) {
