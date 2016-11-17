@@ -41,10 +41,18 @@ title=project_title
     <div class="column is-one-quarter">
         <div class="box">
             <h1 class="title">${project["title"]}</h1>
-            <h2 class="subtitle">${project["summary"]}</h2>
+            <h2 class="subtitle" style="margin-top: 20px;">${project["summary"]}</h2>
             <p>
-                ${project["description"]}
+		    ${project["description"]}
             </p>
+        </div>
+        <div class="box">
+            <h2 class="title">Other projects</h2>
+            <ul>
+                <li>Link to a project</li>
+                <li>Link to another project</li>
+                <li>Here is a link</li>
+            </ul>
         </div>
     </div>
     <div class="column">

@@ -16,16 +16,31 @@ image="http://placehold.it/640x480"
 <@layout.layout
 title="Portfolio"
 >
-<#assign count=0>
-<#list projects as project>
-    <#if count=0>
-        <div class="columns">
-    </#if>
-    <@item project["id"] project["title"] project["image"] />
-    <#assign count=count+1 >
-    <#if count=3>
-        </div>
-        <#assign count=0>
-    </#if>
-</#list>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
+<div class="columns">
+	<@item /><@item /><@item />
+</div>
 </@layout.layout>

@@ -18,11 +18,11 @@
         <span></span>
     </span>
     <div class="nav-right">
-        <a class="nav-item" href="/about">
-            About
+        <a class="nav-item" href="/projects">
+            Projects
         </a>
-        <a class="nav-item" href="/contact">
-            Contact
+        <a class="nav-item" href="/information">
+            Information
         </a>
     </div>
 </nav>

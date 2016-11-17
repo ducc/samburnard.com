@@ -1,6 +1,6 @@
 <#import "admin.ftl" as layout>
 <@layout.admin
-tab_name="About Me Page"
+tab_name="Information Page"
 >
 <br />
 <h3 class="subtitle">Preview</h3>
@@ -10,7 +10,7 @@ tab_name="About Me Page"
     </div>
 </div>
 <h3 class="subtitle">Content</h3>
-<form action="/admin/about" method="post">
+<form action="/admin/contact" method="post">
     <p class="control">
         <textarea class="textarea" style="height: 200px;" name="content" id="content">${content}</textarea>
     </p>

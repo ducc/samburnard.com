@@ -8,8 +8,7 @@ final class Website {
     static final int PORT = 80;
     static final String CREDENTIALS_FILE = "credentials.txt";
     static final String PROJECTS_DIRECTORY = "projects";
-    static final String ABOUT_FILE = "about.txt";
-    static final String CONTACT_FILE = "contact.txt";
+    static final String INFORMATION_FILE = "information.txt";
     static final String HOME_FILE = "home.json";
     static final String SOCIAL_FILE = "social.json";
     static final String TEMPLATE_DIRECTORY = "templates";

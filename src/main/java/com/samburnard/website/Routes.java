@@ -18,8 +18,7 @@ class Routes {
 
     private final Authentication authentication;
     private final Projects projects;
-    private final ContentPage about;
-    private final ContentPage contact;
+    private final ContentPage information;
     private final ContentPage home;
     private final ContentPage social;
     private final Service service;
@@ -28,8 +27,7 @@ class Routes {
     Routes() throws IOException, URISyntaxException {
         this.authentication = new Authentication(new File(Website.CREDENTIALS_FILE));
         this.projects = new Projects(new File(Website.PROJECTS_DIRECTORY));
-        this.about = new ContentPage(new File(Website.ABOUT_FILE));
-        this.contact = new ContentPage(new File(Website.CONTACT_FILE));
+        this.information = new ContentPage(new File(Website.INFORMATION_FILE));
         this.home = new ContentPage(new File(Website.HOME_FILE));
         this.social = new ContentPage(new File(Website.SOCIAL_FILE));
         this.service = Service.ignite();
@@ -43,9 +41,9 @@ class Routes {
         this.engine = new FreeMarkerEngine(configuration);
         index();
         portfolio();
+        projects();
         project();
-        about();
-        contact();
+        information();
         login();
         logout();
         new Admin();
@@ -100,11 +98,17 @@ class Routes {
 
     private void portfolio() {
         service.get("/portfolio", (request, response) -> {
+            return new ModelAndView(new HashMap<>(), "portfolio.ftl");
+        }, engine);
+    }
+
+    private void projects() {
+        service.get("/projects", (request, response) -> {
             Map<String, Object> model = getNewModel();
             List<Map<String, Object>> projects = new ArrayList<>();
             this.projects.getProjects().forEach(project -> projects.add(project.toMap()));
             model.put("projects", projects);
-            return new ModelAndView(model, "portfolio.ftl");
+            return new ModelAndView(model, "projects.ftl");
         }, engine);
     }
 
@@ -124,19 +128,11 @@ class Routes {
         }, engine);
     }
 
-    private void about() {
-        service.get("/about", (request, response) -> {
+    private void information() {
+        service.get("/information", (request, response) -> {
             Map<String, Object> model = getNewModel();
-            model.put("content", about.getContent());
-            return new ModelAndView(model, "about.ftl");
-        }, engine);
-    }
-
-    private void contact() {
-        service.get("/contact", (request, response) -> {
-            Map<String, Object> model = getNewModel();
-            model.put("content", contact.getContent());
-            return new ModelAndView(model, "contact.ftl");
+            model.put("content", information.getContent());
+            return new ModelAndView(model, "information.ftl");
         }, engine);
     }
 
@@ -188,8 +184,7 @@ class Routes {
             manage();
             edit();
             delete();
-            about();
-            contact();
+            information();
             home();
             social();
         }
@@ -349,16 +344,16 @@ class Routes {
             });
         }
 
-        private void about() {
-            service.get("/admin/about", (request, response) -> {
+        private void information() {
+            service.get("/admin/information", (request, response) -> {
                 Map<String, Object> model = getNewModel();
                 if (!authentication.isAuthenticated(request.session())) {
                     return error(response, 401, "You must be logged in!");
                 }
-                model.put("content", about.getContent());
-                return new ModelAndView(model, "admin/admin_about.ftl");
+                model.put("content", information.getContent());
+                return new ModelAndView(model, "admin/admin_information.ftl");
             }, engine);
-            service.post("/admin/about", (request, response) -> {
+            service.post("/admin/information", (request, response) -> {
                 if (!authentication.isAuthenticated(request.session())) {
                     return "no.";
                 }
@@ -366,31 +361,8 @@ class Routes {
                 if (content == null) {
                     return "content is null";
                 }
-                about.setContent(content);
-                response.redirect("/admin/about");
-                return "ok";
-            });
-        }
-
-        private void contact() {
-            service.get("/admin/contact", (request, response) -> {
-                Map<String, Object> model = getNewModel();
-                if (!authentication.isAuthenticated(request.session())) {
-                    return error(response, 401, "You must be logged in!");
-                }
-                model.put("content", contact.getContent());
-                return new ModelAndView(model, "admin/admin_contact.ftl");
-            }, engine);
-            service.post("/admin/contact", (request, response) -> {
-                if (!authentication.isAuthenticated(request.session())) {
-                    return "no.";
-                }
-                String content = request.queryParams("content");
-                if (content == null) {
-                    return "content is null";
-                }
-                contact.setContent(content);
-                response.redirect("/admin/contact");
+                information.setContent(content);
+                response.redirect("/admin/information");
                 return "ok";
             });
         }
