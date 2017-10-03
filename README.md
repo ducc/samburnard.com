@@ -1,3 +1,5 @@
+# Use GO Sam Burnard!!! :smiley :smiley: :smiley:
+
 # samburnard.com
 A custom website made for Sam Burnard to display his portfolio.
 
